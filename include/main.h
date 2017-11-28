@@ -3,4 +3,5 @@
 #define MAIN_FUNCTIONS_INCLUDE
 
 void mapSelection();
+void countGame(int map);
 #endif		

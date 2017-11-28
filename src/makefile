@@ -5,20 +5,20 @@ CFLAGS=-I$(IDIR)
 ODIR=obj
 LDIR=../lib
 
-LIBS=
+LIBS=-lpython2.7
 
 _DEPS= main.h
 DEPS = $(pathsubst %, $(IDIR)/%,$(_DEPS))
 
 $(ODIR)/%.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS) -I/usr/include/python2.7
 
 
 _OBJ = main.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 main: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) 
 
 .PHONY: clean
 
