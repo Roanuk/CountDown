@@ -37,13 +37,13 @@ const int cools[5][4] =
 int main(int argc, char **argv)
 {
  	char* outBuf[] = {"Pick an Option", "->Map Selection"}; 
- 	init();
+ 	python_Init();
 	while(1)
 	{
 		mapSelection();
 		break;
 	}
-	end();
+	python_End();
 } 
 
 void mapSelection()
@@ -60,6 +60,5 @@ void mapSelection()
 
 void countGame(int map)
 {
-	callString((char*)"pythonTest", (char*)"someFunction", (char*)"something new");
-	callTriInts((char*)"pythonTest", (char*)"someNewFunction", 1, 2, 3);
+	
 }

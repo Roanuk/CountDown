@@ -1,6 +1,16 @@
 
 #include <Python.h>
-#include <stdio.h>
-#include <string.h>
-#include "main.h"
+#include "PythonCaller.h"
+#include "SevenSegment.h"
+
+void SetDigits(char* fourDigitTime)
+{
+	callString((char*)"SevenSegment", (char*)"print_number_str", fourDigitTime);
+}
+
+void SetColon(int enable)
+{
+	callInt((char*)"SevenSegment",(char*)"set_colon", enable);
+}
+
 

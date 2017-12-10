@@ -4,7 +4,7 @@
 #include <string.h>
 #include "PythonCaller.h"
 
-void init()
+void python_Init()
 {
 	// Set PYTHONPATH TO working directory
 	setenv("PYTHONPATH",".",1);
@@ -13,7 +13,7 @@ void init()
 	Py_Initialize();
 }
 
-void end()
+void python_End()
 {	
 	// Finish the Python Interpreter
 	Py_Finalize();
@@ -24,6 +24,12 @@ void end()
 void callString(char* moduleName, char* functionName, char* callArg)
 {
 	PyObject* pValue = Py_BuildValue("(z)", callArg);
+	call(moduleName, functionName, pValue);
+}
+
+void callInt(char* moduleName, char* functionName, int val)
+{
+	PyObject* pValue = Py_BuildValue("(i)", val);
 	call(moduleName, functionName, pValue);
 }
 
