@@ -4,7 +4,7 @@
 #include <string.h>
 #include "PythonCaller.h"
 
-void python_Init()
+void pythonInit()
 {
 	// Set PYTHONPATH TO working directory
 	setenv("PYTHONPATH",".",1);
@@ -13,7 +13,7 @@ void python_Init()
 	Py_Initialize();
 }
 
-void python_End()
+void pythonEnd()
 {	
 	// Finish the Python Interpreter
 	Py_Finalize();

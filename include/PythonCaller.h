@@ -1,8 +1,8 @@
 
 #ifndef PYTHON_CALLER_FUNCTIONS_INCLUDE
 #define PYTHON_CALLER_FUNCTIONS_INCLUDE
-void python_Init();
-void python_End();
+void pythonInit();
+void pythonEnd();
 //z is string 
 //i is int
 void callString(char* moduleName, char* functionName, char* callArg);

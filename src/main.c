@@ -1,8 +1,11 @@
 
 #include <Python.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
 #include "main.h"
+#include "Input.h"
 #include "PythonCaller.h"
 
 /*
@@ -36,29 +39,61 @@ const int cools[5][4] =
  
 int main(int argc, char **argv)
 {
- 	char* outBuf[] = {"Pick an Option", "->Map Selection"}; 
- 	python_Init();
-	while(1)
-	{
-		mapSelection();
-		break;
+	int map;
+	int channel;
+	int pid;
+	pid_t channelPids[CHANNELS];
+	int channelStatus[CHANNELS];
+ 	pythonInit();
+ 	int runs = 10;
+	while(runs > 0)
+	{		
+		char* outBuf[] = {"Up/Down for Map", "L/R for Channel"}; 
+		do{
+			printf("Select ");	
+			getSelection(&map, &channel);	
+			checkChannels(channelPids, channelStatus);
+		} while(channelStatus[channel] == RUNNING);
+		printf("C:%d ", channel);
+		pid = fork();
+		if(pid == 0)
+		{
+			runGame(map, channel);
+			return 0;
+		}
+		else
+		{
+			printf("Running %d", channel);
+			channelPids[channel] = pid;
+			channelStatus[channel] = RUNNING;
+		}
+		runs -= 1;
 	}
-	python_End();
+	pythonEnd();
 } 
 
-void mapSelection()
-{			
-	char* outBuf[] = {"Pick an Option", "->Map"}; 
-	int map = 0;
-	while(1)
+void checkChannels(pid_t channelPids[], int channelStatus[])
+{
+	int status;
+	for(int index = 0; index < CHANNELS; index += 1)
 	{
-		countGame(map);
-		map = map+1;
-		break;
+		if(channelStatus[index] == READY)
+		{
+			continue;
+		}
+		waitpid(channelPids[index], &status, WNOHANG);
+		if(WIFEXITED(status))
+		{
+			channelStatus[index] = READY;
+		}
+		else
+		{
+			channelStatus[index] = RUNNING;
+		}
 	}
 }
 
-void countGame(int map)
+void runGame(int map, int channel)
 {
-	
+	sleep(2);
 }
