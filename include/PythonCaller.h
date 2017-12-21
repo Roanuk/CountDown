@@ -3,6 +3,7 @@
 #define PYTHON_CALLER_FUNCTIONS_INCLUDE
 void pythonInit();
 void pythonEnd();
+void test();
 //z is string 
 //i is int
 void callString(char* moduleName, char* functionName, char* callArg);

@@ -7,4 +7,9 @@
 #include <sys/types.h>
 void checkChannels(pid_t channelPids[], int channelStatus[]);
 void runGame(int map, int channel);
+void multiChannelExe();
+void singleChannelExe();
+void CoolDownDisplay(int gameTime, int map);
+void GameTimeDisplay(int gameTime);
+int CoolProgress(int gameTime, int intervalTime);
 #endif		

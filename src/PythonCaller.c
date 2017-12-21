@@ -39,6 +39,25 @@ void callTriInts(char* moduleName, char* functionName, int val1, int val2, int v
 	call(moduleName, functionName, pValue);
 }
 
+void test()
+{
+	PyObject *pName, *pModule, *pDict, *pFunc, *presult;	
+	
+	// Build the name object
+	pName = PyString_FromString("sevensegment_test");
+	
+	if (PyCallable_Check(pName))
+	{
+		presult=PyObject_CallObject(pName, NULL);
+		PyErr_Print();
+	} else 
+	{
+		PyErr_Print();
+	}
+
+	// Clean up
+	Py_DECREF(pName);
+}
 
 int call(char* moduleName, char* functionName,  PyObject* pValue)
 {
@@ -64,7 +83,6 @@ int call(char* moduleName, char* functionName,  PyObject* pValue)
 
 	if (PyCallable_Check(pFunc))
 	{
-		printf("Let's give this a shot!\n");
 		presult=PyObject_CallObject(pFunc,pValue);
 		PyErr_Print();
 	} else 
@@ -72,7 +90,6 @@ int call(char* moduleName, char* functionName,  PyObject* pValue)
 		PyErr_Print();
 	}
 	
-	printf("Result is %d\n",PyInt_AsLong(presult));
 	Py_DECREF(pValue);
 
 	// Clean up
