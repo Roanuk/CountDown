@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 	{		
 		char* outBuf[] = {"Up/Down for Map", "L/R for Channel"}; 
 		//singleChannelExe();
-		test();
+		SetDigits("0000");
 		runs -= 1;
 	}
 	pythonEnd();
