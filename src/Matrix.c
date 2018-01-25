@@ -1,6 +1,4 @@
 
-#include <Python.h>
-#include "PythonCaller.h"
 #include "Matrix.h"
 
 void SetPixel(int x, int y, int enable)

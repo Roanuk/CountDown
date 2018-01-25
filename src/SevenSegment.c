@@ -1,6 +1,4 @@
 
-#include <Python.h>
-#include "PythonCaller.h"
 #include "SevenSegment.h"
 
 void SetDigits(char* fourDigitTime)

@@ -5,16 +5,16 @@ CFLAGS=-I$(IDIR)
 ODIR=obj
 LDIR=../lib
 
-LIBS=-lpython2.7
+LIBS=
 
-_DEPS= main.h PythonCaller.h SevenSegment.h Matrix.h CoolBars.h Input.h
+_DEPS= main.h SevenSegment.h Matrix.h CoolBars.h Input.h
 DEPS = $(pathsubst %, $(IDIR)/%,$(_DEPS))
 
 $(ODIR)/%.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS) -I/usr/include/python2.7
 
 
-_OBJ = main.o PythonCaller.o SevenSegment.o Matrix.o CoolBars.o Input.o
+_OBJ = main.o SevenSegment.o Matrix.o CoolBars.o Input.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 main: $(OBJ)

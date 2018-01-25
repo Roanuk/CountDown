@@ -1,12 +1,11 @@
 
-#include <Python.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
 #include "main.h"
 #include "Input.h"
-#include "PythonCaller.h"
 #include "SevenSegment.h"
 #include "CoolBars.h"
 
@@ -42,7 +41,6 @@ const int cools[NumOfMaps][NumOfCools] =
 	 
 int main(int argc, char **argv)
 {
- 	pythonInit();
  	int runs = 1;
 	while(runs > 0)
 	{		
@@ -51,7 +49,6 @@ int main(int argc, char **argv)
 		SetDigits("0000");
 		runs -= 1;
 	}
-	pythonEnd();
 } 
 
 void singleChannelExe()
