@@ -6,10 +6,10 @@
 #define READY 0
 #include <sys/types.h>
 void checkChannels(pid_t channelPids[], int channelStatus[]);
-void runGame(int map, int channel);
+void runGame(int mapIdx, int channel);
 void multiChannelExe();
 void singleChannelExe();
-void CoolDownDisplay(int gameTime, int map);
-void GameTimeDisplay(int gameTime);
+void UpdateCoolDownDisplay(int currentGameTime, int mapIdx);
+void UpdateGameTimeDisplay(int newGameTime);
 int CoolProgress(int gameTime, int intervalTime);
 #endif		

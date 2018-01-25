@@ -16,37 +16,42 @@
  * 		a run countdown method will begin to keep track of time
  * 		as well as percent cooldown remaining for each powerup
 */
-#define NumOfMaps 5
-const char* maps[NumOfMaps] = 
+#define MapCount 5
+const char* mapNames[MapCount] = 
 	{ 
 		"Chill Out",
-		"Damnation", 
-		"Derelict", 
-		"Hang 'Em High", 
-		"Prisoner" 
+		"Prisoner",
+		"Hang 'Em High",
+		"Derelict",
+		"Damnation",
 	};
 
-#define NumOfCools 4
-const char* powers[NumOfCools] = 
-	{ "Rocks", "Snipe", "Camo", "Ovy" };
-
-const int cools[NumOfMaps][NumOfCools] = 
+#define CoolDownCount 4
+#define UsedCooldownsCount 3
+const int mapCooldowns[MapCount][CoolDownCount] = 
 	{ 
-		{120, 30, 120, 60}, 
-		{120, 30, 60, 60}, 
-		{75, 30, 60, 60}, 
-		{120, 30, 60, 60}, 
-		{120, 30, 60, 60} 
+		// R:=Rockets,  C:=Camo,  O:=Overshield,  S:=Sniper(unused)
+		//R    C   O    S
+		{120, 120, 60, 30}, // Chilly
+		{120, 60, 60, 30}, // Pris
+		{120, 60, 60, 30}, // Hang em; note that OV alternates with a Camo on this map, as "top powerup"
+		{75, 60, 60, 30}, // Derry
+		{120, 60, 60, 30},  // Dammy
 	};
+
+// Note these constants should be in sync with the cooldown grid above
+#define RocketCooldownIndex 0
+#define CamoCooldownIndex 1
+#define OvershieldCooldownIndex 2
 	 
 int main(int argc, char **argv)
 {
  	int runs = 1;
-	while(runs > 0)
+	while (runs > 0)
 	{		
 		char* outBuf[] = {"Up/Down for Map", "L/R for Channel"}; 
-		//singleChannelExe();
-		SetDigits("0000");
+		singleChannelExe();
+		// SetDigits("0000");
 		runs -= 1;
 	}
 } 
@@ -56,45 +61,59 @@ void singleChannelExe()
 	runGame(0,0);
 }
 
-void runGame(int map, int channel)
+void runGame(int mapIdx, int channel)
 {
-	int endTime = 200;
-	int gameTime = 0;
+	int endTime = 99 * 60 + 59; // 99:59
+	int currentGameTime = 0;
 	//SetColon(1);
-	while(gameTime < endTime)
+	while (currentGameTime < endTime)
 	{
-		//CoolDownDisplay(gameTime, map);
-		//GameTimeDisplay(gameTime);
+		UpdateCoolDownDisplay(currentGameTime, mapIdx);
+		UpdateGameTimeDisplay(currentGameTime);
 		sleep(1);
-		gameTime += 1;
+		currentGameTime += 1;
 	}
 }
 
-void GameTimeDisplay(int gameTime)
+void UpdateGameTimeDisplay(int newGameTime)
 {
 	const int DigitCount = 4;
 	char printTime[DigitCount];
 	
-	int game10Min = (gameTime / 60) / 10;
-	int gameMin = (gameTime / 60) % 10;
-	int game10Sec = (gameTime % 60) / 10;
-	int gameSec = (gameTime % 60) % 10;
+	int game10Min = (newGameTime / 60) / 10;
+	int gameMin = (newGameTime / 60) % 10;
+	int game10Sec = (newGameTime % 60) / 10;
+	int gameSec = (newGameTime % 60) % 10;
 	sprintf(printTime, "%d%d%d%d", game10Min, gameMin, game10Sec, gameSec);
 	SetDigits(printTime);
 }
 
-void CoolDownDisplay(int gameTime, int map)
+void UpdateCoolDownDisplay(int currentGameTime, int mapIdx)
 {
-	for(int power = 0; power < NumOfCools; power += 1)
+	int secUntilNextMinuteMark = 60 - (currentGameTime % 60);
+	int coolDownComingUpTracking[UsedCooldownsCount];
+	
+	for (int cooldownIdx = 0; cooldownIdx < UsedCooldownsCount; cooldownIdx += 1)
 	{
-		SetProgress(power, CoolProgress(gameTime, cools[map][power]));
+		coolDownComingUpTracking[cooldownIdx] = 1; // hardcoding to ON right now
+		
+		// Actually need to be referencing the CD intervals indicated in the mapCooldowns matrix, %'ing by 60,
+		// and seeing if the CD is coming up this minute (or something like that), and then setting
+		// coolDownComingUpTracking[cooldownIdx] accordingly
 	}
+	
+	SetCountdownState(
+		coolDownComingUpTracking[RocketCooldownIndex],
+		coolDownComingUpTracking[CamoCooldownIndex],
+		coolDownComingUpTracking[OvershieldCooldownIndex],
+		secUntilNextMinuteMark
+		);
 }
 
-
+// TO-DO, delete this. saving for now for reference for how to calculate intervals
 int CoolProgress(int gameTime, int intervalTime)
 {
-	if(intervalTime == 0)
+	if (intervalTime == 0)
 	{
 		return 0;
 	}
@@ -102,11 +121,11 @@ int CoolProgress(int gameTime, int intervalTime)
 	const int CoolSize = 16;
 	int progress = (((gameTime % intervalTime) * CoolSize) / intervalTime) + 1;
 	
-	if(progress > CoolSize)
+	if (progress > CoolSize)
 	{
 		return CoolSize;
 	}
-	else if(progress > 0)
+	else if (progress > 0)
 	{
 		return progress;
 	}
@@ -119,14 +138,14 @@ int CoolProgress(int gameTime, int intervalTime)
 void checkChannels(pid_t channelPids[], int channelStatus[])
 {
 	int status;
-	for(int index = 0; index < CHANNELS; index += 1)
+	for (int index = 0; index < CHANNELS; index += 1)
 	{
-		if(channelStatus[index] == READY)
+		if (channelStatus[index] == READY)
 		{
 			continue;
 		}
 		waitpid(channelPids[index], &status, WNOHANG);
-		if(WIFEXITED(status))
+		if (WIFEXITED(status))
 		{
 			channelStatus[index] = READY;
 		}
@@ -148,10 +167,10 @@ void multiChannelExe()
 		printf("Select ");	
 		getSelection(&map, &channel);	
 		checkChannels(channelPids, channelStatus);
-	} while(channelStatus[channel] == RUNNING);
+	} while (channelStatus[channel] == RUNNING);
 	printf("C:%d ", channel);
 	pid = fork();
-	if(pid == 0)
+	if (pid == 0)
 	{
 		runGame(map, channel);
 		exit(0);

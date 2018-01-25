@@ -11,7 +11,7 @@ _DEPS= main.h SevenSegment.h Matrix.h CoolBars.h Input.h
 DEPS = $(pathsubst %, $(IDIR)/%,$(_DEPS))
 
 $(ODIR)/%.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS) -I/usr/include/python2.7
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 
 _OBJ = main.o SevenSegment.o Matrix.o CoolBars.o Input.o
