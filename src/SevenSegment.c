@@ -5,12 +5,12 @@
 
 void SetDigits(char* fourDigitTime)
 {
-	callString((char*)"Adafruit_LED_Backpack.SevenSegment", (char*)"print_number_str", fourDigitTime);
+	// call python from command line, i.e. "python -c '...'"
 }
 
 void SetColon(int enable)
 {
-	callInt((char*)"Adafruit_LED_Backpack.SevenSegment",(char*)"set_colon", enable);
+	// call python from command line, i.e. "python -c '...'"
 }
 
 
