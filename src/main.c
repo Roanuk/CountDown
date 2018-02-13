@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <time.h>
 #include "main.h"
 #include "Input.h"
 #include "SevenSegment.h"
@@ -58,6 +59,11 @@ int main(int argc, char **argv)
 
 void singleChannelExe()
 {
+	if (system(NULL)) {}
+		// no-op, this is good
+	else
+		exit(EXIT_FAILURE);
+		
 	runGame(0,0);
 }
 
@@ -65,30 +71,16 @@ void runGame(int mapIdx, int channel)
 {
 	int endTime = 99 * 60 + 59; // 99:59
 	int currentGameTime = 0;
-	//SetColon(1);
 	while (currentGameTime < endTime)
 	{
-		UpdateCoolDownDisplay(currentGameTime, mapIdx);
-		UpdateGameTimeDisplay(currentGameTime);
-		sleep(1);
+		UpdateDisplays(currentGameTime, mapIdx);
+		// usleep(200000); // this is still somehow taking longer than a second in between calls.. the thread context switching must be reallllly slow on a rspi
 		currentGameTime += 1;
+		puts("...");
 	}
 }
 
-void UpdateGameTimeDisplay(int newGameTime)
-{
-	const int DigitCount = 4;
-	char printTime[DigitCount];
-	
-	int game10Min = (newGameTime / 60) / 10;
-	int gameMin = (newGameTime / 60) % 10;
-	int game10Sec = (newGameTime % 60) / 10;
-	int gameSec = (newGameTime % 60) % 10;
-	sprintf(printTime, "%d%d%d%d", game10Min, gameMin, game10Sec, gameSec);
-	SetDigits(printTime);
-}
-
-void UpdateCoolDownDisplay(int currentGameTime, int mapIdx)
+void UpdateDisplays(int currentGameTime, int mapIdx)
 {
 	int secUntilNextMinuteMark = 60 - (currentGameTime % 60);
 	int coolDownComingUpTracking[UsedCooldownsCount];
@@ -102,12 +94,37 @@ void UpdateCoolDownDisplay(int currentGameTime, int mapIdx)
 		// coolDownComingUpTracking[cooldownIdx] accordingly
 	}
 	
-	SetCountdownState(
+	char pythonCommandBuffer [50];
+	
+	int n = sprintf(pythonCommandBuffer, "python LEDUpdate.py -gt %d", currentGameTime);
+	
+	char* eoStr = pythonCommandBuffer + n;
+	
+	n = 0;
+	if (coolDownComingUpTracking[RocketCooldownIndex])
+	{
+		strcpy(eoStr, " +r");
+		eoStr += 3;
+	}
+	if (coolDownComingUpTracking[CamoCooldownIndex])
+	{
+		strcpy(eoStr, " +c");
+		eoStr += 3;
+	}
+	if (coolDownComingUpTracking[OvershieldCooldownIndex])
+	{
+		strcpy(eoStr, " +o");
+	}
+		
+	
+	system(pythonCommandBuffer);
+	puts(pythonCommandBuffer);
+	/*SetCountdownState(
 		coolDownComingUpTracking[RocketCooldownIndex],
 		coolDownComingUpTracking[CamoCooldownIndex],
 		coolDownComingUpTracking[OvershieldCooldownIndex],
 		secUntilNextMinuteMark
-		);
+		);*/
 }
 
 // TO-DO, delete this. saving for now for reference for how to calculate intervals

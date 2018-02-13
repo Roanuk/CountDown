@@ -9,7 +9,6 @@ void checkChannels(pid_t channelPids[], int channelStatus[]);
 void runGame(int mapIdx, int channel);
 void multiChannelExe();
 void singleChannelExe();
-void UpdateCoolDownDisplay(int currentGameTime, int mapIdx);
-void UpdateGameTimeDisplay(int newGameTime);
+void UpdateDisplays(int currentGameTime, int mapIdx);
 int CoolProgress(int gameTime, int intervalTime);
 #endif		
